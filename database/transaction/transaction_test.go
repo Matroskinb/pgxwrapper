@@ -1,10 +1,11 @@
-package transaction
+package transaction_test
 
 import (
 	"context"
 	"testing"
 
 	"github.com/Matroskinb/pgxwrapper/database"
+	"github.com/Matroskinb/pgxwrapper/database/transaction"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,8 +26,8 @@ func TestMultipleQueriesWithWrapTx(t *testing.T) {
 	`)
 	require.NoError(t, err)
 
-	err = db.WithTx(ctx, func(innerCtx context.Context, queryRunner *Executor) error {
-		err = db.WithTx(innerCtx, func(innerCtx context.Context, queryRunner *Executor) error {
+	err = db.WithTx(ctx, func(innerCtx context.Context, queryRunner *transaction.Executor) error {
+		err = db.WithTx(innerCtx, func(innerCtx context.Context, queryRunner *transaction.Executor) error {
 			_, err = queryRunner.Insert(innerCtx, db.QueryBuilder().Insert("testing_transactions").Columns("id").Values("first"))
 
 			return err
@@ -34,7 +35,7 @@ func TestMultipleQueriesWithWrapTx(t *testing.T) {
 
 		require.NoError(t, err)
 
-		err = db.WithTx(innerCtx, func(innerCtx context.Context, queryRunner *Executor) error {
+		err = db.WithTx(innerCtx, func(innerCtx context.Context, queryRunner *transaction.Executor) error {
 			_, err = queryRunner.Insert(innerCtx, db.QueryBuilder().Insert("testing_transactions").Columns("id").Values("second"))
 
 			return err
@@ -67,7 +68,7 @@ func TestMultipleQueriesWithTx(t *testing.T) {
 	`)
 	require.NoError(t, err)
 
-	err = db.WithTx(ctx, func(ctx context.Context, queryRunner *Executor) error {
+	err = db.WithTx(ctx, func(ctx context.Context, queryRunner *transaction.Executor) error {
 		_, err = queryRunner.Insert(ctx, db.QueryBuilder().Insert("testing_transactions").Columns("id").Values("first"))
 
 		return err
@@ -75,7 +76,7 @@ func TestMultipleQueriesWithTx(t *testing.T) {
 
 	require.NoError(t, err)
 
-	err = db.WithTx(ctx, func(ctx context.Context, queryRunner *Executor) error {
+	err = db.WithTx(ctx, func(ctx context.Context, queryRunner *transaction.Executor) error {
 		_, err = queryRunner.Insert(ctx, db.QueryBuilder().Insert("testing_transactions").Columns("id").Values("second"))
 
 		return err
