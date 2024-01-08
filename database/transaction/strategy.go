@@ -3,7 +3,7 @@ package transaction
 import (
 	"context"
 
-	"github.com/Matroskinb/pgxwrapper/database"
+	"github.com/Matroskinb/pgxwrapper/database/exception"
 	"github.com/Matroskinb/pgxwrapper/database/query"
 
 	"github.com/jackc/pgx/v5"
@@ -24,7 +24,7 @@ func (strategy *Strategy) Handle(
 	if err = handler(ctx, NewTransactionExecutor(strategy.tx, query.NewExecutor(strategy.tx))); err == nil {
 		err = strategy.tx.Commit(ctx)
 
-		return database.Error(err)
+		return exception.New(err)
 	}
 
 	_ = strategy.tx.Rollback(ctx)

@@ -1,4 +1,4 @@
-package database
+package exception
 
 import (
 	"errors"
@@ -13,8 +13,8 @@ var (
 	ErrAlreadyExists  = errors.New("already exists")
 )
 
-// Error extracting database error
-func Error(err error) error {
+// New extracting database error
+func New(err error) error {
 	if err == nil {
 		return nil
 	}

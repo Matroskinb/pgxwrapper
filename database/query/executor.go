@@ -2,7 +2,8 @@ package query
 
 import (
 	"context"
-	"github.com/Matroskinb/pgxwrapper/database"
+
+	"github.com/Matroskinb/pgxwrapper/database/exception"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/georgysavva/scany/v2/pgxscan"
@@ -32,7 +33,7 @@ func (r *Executor) Update(ctx context.Context, builder squirrel.UpdateBuilder) (
 
 	res, err := r.ExecuteRaw(ctx, query, args...)
 
-	return res, database.Error(err)
+	return res, exception.New(err)
 }
 
 func (r *Executor) Delete(ctx context.Context, builder squirrel.DeleteBuilder) (int64, error) {
@@ -43,7 +44,7 @@ func (r *Executor) Delete(ctx context.Context, builder squirrel.DeleteBuilder) (
 
 	res, err := r.ExecuteRaw(ctx, query, args...)
 
-	return res, database.Error(err)
+	return res, exception.New(err)
 }
 
 func (r *Executor) Insert(ctx context.Context, builder squirrel.InsertBuilder) (int64, error) {
@@ -54,24 +55,24 @@ func (r *Executor) Insert(ctx context.Context, builder squirrel.InsertBuilder) (
 
 	res, err := r.ExecuteRaw(ctx, query, args...)
 
-	return res, database.Error(err)
+	return res, exception.New(err)
 }
 
 func (r *Executor) SelectRaw(ctx context.Context, dst any, query string, args ...any) error {
 	err := pgxscan.Select(ctx, r.executor, dst, query, args...)
 
-	return database.Error(err)
+	return exception.New(err)
 }
 
 func (r *Executor) GetRaw(ctx context.Context, dst any, query string, args ...any) error {
 	err := pgxscan.Get(ctx, r.executor, dst, query, args...)
 
-	return database.Error(err)
+	return exception.New(err)
 }
 
 func (r *Executor) ExecuteRaw(ctx context.Context, query string, args ...any) (rowsAffected int64, err error) {
 	tag, err := r.executor.Exec(ctx, query, args...)
 	rowsAffected = tag.RowsAffected()
 
-	return rowsAffected, database.Error(err)
+	return rowsAffected, exception.New(err)
 }

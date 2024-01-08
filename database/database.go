@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/Matroskinb/pgxwrapper/database/exception"
 	"github.com/Matroskinb/pgxwrapper/database/query"
 	"github.com/Matroskinb/pgxwrapper/database/transaction"
 
@@ -55,35 +56,35 @@ func (r Database) WithTx(
 func (r Database) Update(ctx context.Context, builder squirrel.UpdateBuilder) (rowsAffected int64, err error) {
 	rowsAffected, err = query.NewExecutor(r.pool).Update(ctx, builder)
 
-	return rowsAffected, Error(err)
+	return rowsAffected, exception.New(err)
 }
 
 func (r Database) Delete(ctx context.Context, builder squirrel.DeleteBuilder) (rowsAffected int64, err error) {
 	rowsAffected, err = query.NewExecutor(r.pool).Delete(ctx, builder)
 
-	return rowsAffected, Error(err)
+	return rowsAffected, exception.New(err)
 }
 
 func (r Database) Insert(ctx context.Context, builder squirrel.InsertBuilder) (rowsAffected int64, err error) {
 	rowsAffected, err = query.NewExecutor(r.pool).Insert(ctx, builder)
 
-	return rowsAffected, Error(err)
+	return rowsAffected, exception.New(err)
 }
 
 func (r Database) SelectRaw(ctx context.Context, dst any, sql string, args ...any) error {
 	err := query.NewExecutor(r.pool).SelectRaw(ctx, dst, sql, args...)
 
-	return Error(err)
+	return exception.New(err)
 }
 
 func (r Database) GetRaw(ctx context.Context, dst any, sql string, args ...any) error {
 	err := query.NewExecutor(r.pool).GetRaw(ctx, dst, sql, args...)
 
-	return Error(err)
+	return exception.New(err)
 }
 
 func (r Database) ExecuteRaw(ctx context.Context, sql string, args ...any) (rowsAffected int64, err error) {
 	rowsAffected, err = query.NewExecutor(r.pool).ExecuteRaw(ctx, sql, args...)
 
-	return rowsAffected, Error(err)
+	return rowsAffected, exception.New(err)
 }
